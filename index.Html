@@ -1,0 +1,984 @@
+
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KABOS STORE - نظام الدفع الاحترافي</title>
+    <meta name="description" content="نظام دفع احترافي وآمن مع دعم متعدد اللغات وتكامل مع تلغرام بوت">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --accent: #f59e0b;
+            --success: #10b981;
+            --error: #ef4444;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-strong: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #ffffff;
+            --text-secondary: #e5e7eb;
+            --text-muted: #9ca3af;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cairo', 'Inter', system-ui, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        html.rtl {
+            direction: rtl;
+        }
+
+        html.ltr {
+            direction: ltr;
+        }
+
+        /* Animated Background */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(59, 130, 246, 0.3);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { 
+                transform: translateY(0px) rotate(0deg); 
+                opacity: 0.3; 
+            }
+            50% { 
+                transform: translateY(-20px) rotate(180deg); 
+                opacity: 0.8; 
+            }
+        }
+
+        /* Glass Morphism */
+        .glass {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+        }
+
+        .glass-strong {
+            background: var(--glass-strong);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+        }
+
+        /* Language Switcher */
+        .language-switcher {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+        }
+
+        .language-switcher select {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            padding: 8px 12px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        /* Container */
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+        }
+
+        /* Features */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .feature {
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .feature:hover {
+            transform: translateY(-2px);
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 10px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+        }
+
+        .feature-text {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Form */
+        .payment-form {
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+
+        .form-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        /* Payment Methods */
+        .payment-methods {
+            margin-bottom: 20px;
+        }
+
+        .payment-method {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            margin-bottom: 10px;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .payment-method:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .payment-method.selected {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: rgba(59, 130, 246, 0.5);
+        }
+
+        .payment-method-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .payment-method-id {
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Social Buttons */
+        .social-section {
+            margin-bottom: 30px;
+        }
+
+        .social-text {
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .social-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .social-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .social-btn:hover {
+            transform: translateY(-2px) scale(1.02);
+        }
+
+        .whatsapp { background: #25d366; }
+        .telegram { background: #0088cc; }
+        .facebook { background: #1877f2; }
+
+        /* Terms Modal */
+        .terms-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .terms-link a {
+            color: var(--accent);
+            text-decoration: underline;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        .modal-content {
+            max-width: 500px;
+            max-height: 70vh;
+            overflow-y: auto;
+            padding: 30px;
+            border-radius: 16px;
+        }
+
+        .modal-header {
+            margin-bottom: 20px;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .modal-body {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            white-space: pre-line;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* Alert Messages */
+        .alert {
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert.success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #10b981;
+        }
+
+        .alert.error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+        }
+
+        /* Loading State */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .title {
+                font-size: 2rem;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .payment-form {
+                padding: 20px;
+            }
+            
+            .modal-content {
+                margin: 10px;
+                padding: 20px;
+            }
+        }
+
+        /* RTL Adjustments */
+        html.rtl .language-switcher {
+            left: auto;
+            right: 20px;
+        }
+
+        html.rtl .close-btn {
+            left: 20px;
+            right: auto;
+        }
+
+        /* File Input Styling */
+        .file-input {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .file-input input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-input-label {
+            display: block;
+            padding: 12px 16px;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            color: var(--text-muted);
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .file-input:hover .file-input-label {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .file-selected {
+            color: var(--text-primary) !important;
+        }
+
+        /* Minimum Deposit Notice */
+        .deposit-notice {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-left: 4px solid var(--accent);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: var(--accent);
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="animated-bg">
+        <div class="particle" style="width: 4px; height: 4px; top: 10%; left: 10%; animation-delay: 0s;"></div>
+        <div class="particle" style="width: 6px; height: 6px; top: 30%; left: 30%; animation-delay: 1s;"></div>
+        <div class="particle" style="width: 8px; height: 8px; top: 50%; left: 50%; animation-delay: 2s;"></div>
+        <div class="particle" style="width: 5px; height: 5px; top: 70%; left: 70%; animation-delay: 3s;"></div>
+        <div class="particle" style="width: 7px; height: 7px; top: 20%; left: 80%; animation-delay: 4s;"></div>
+    </div>
+
+    <!-- Language Switcher -->
+    <div class="language-switcher">
+        <select id="languageSelect" class="glass">
+            <option value="ar">العربية</option>
+            <option value="en">English</option>
+            <option value="ru">Русский</option>
+        </select>
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1 class="title" id="title">KABOS STORE</h1>
+            <p class="subtitle" id="subtitle">نظام الدفع الاحترافي والآمن</p>
+        </div>
+
+        <!-- Features -->
+        <div class="features">
+            <div class="feature glass">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="feature-text" id="security">أمان عالي</div>
+            </div>
+            <div class="feature glass">
+                <div class="feature-icon">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <div class="feature-text" id="speed">سرعة فائقة</div>
+            </div>
+            <div class="feature glass">
+                <div class="feature-icon">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="feature-text" id="trust">مصداقية</div>
+            </div>
+        </div>
+
+        <!-- Alert -->
+        <div id="alert" class="alert"></div>
+
+        <!-- Payment Form -->
+        <form class="payment-form glass-strong" id="paymentForm">
+            <h2 class="form-label" id="formTitle" style="text-align: center; font-size: 20px; margin-bottom: 25px;">نموذج الدفع</h2>
+            
+            <div class="form-group">
+                <label class="form-label" id="usernameLabel">اسم المستخدم</label>
+                <input type="text" class="form-input" id="username" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" id="amountLabel">عدد الشحن ($)</label>
+                <input type="number" class="form-input" id="amount" min="0.5" step="0.01" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" id="orderIdLabel">معرف الطلب</label>
+                <input type="text" class="form-input" id="orderId" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" id="screenshotLabel">إرفاق صورة الدفع</label>
+                <div class="file-input">
+                    <input type="file" id="screenshot" accept="image/*" required>
+                    <label for="screenshot" class="file-input-label" id="screenshotPlaceholder">اختر صورة الدفع</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" id="paymentMethodLabel">طريقة الدفع</label>
+                <div class="payment-methods">
+                    <div class="payment-method" data-method="binance" data-id="1214633975">
+                        <div class="payment-method-info">
+                            <input type="radio" name="paymentMethod" value="binance" id="binance">
+                            <label for="binance">Binance Pay</label>
+                        </div>
+                        <div class="payment-method-id">ID: 1214633975</div>
+                    </div>
+                    <div class="payment-method" data-method="redotpay" data-id="1553954270">
+                        <div class="payment-method-info">
+                            <input type="radio" name="paymentMethod" value="redotpay" id="redotpay">
+                            <label for="redotpay">RedotPay</label>
+                        </div>
+                        <div class="payment-method-id">ID: 1553954270</div>
+                    </div>
+                    <div class="payment-method" data-method="payeer" data-id="P1122897442">
+                        <div class="payment-method-info">
+                            <input type="radio" name="paymentMethod" value="payeer" id="payeer">
+                            <label for="payeer">Payeer</label>
+                        </div>
+                        <div class="payment-method-id">ID: P1122897442</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="deposit-notice" id="depositNotice">
+                الحد الأدنى للإيداع: 0.5$
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn">
+                إرسال طلب الدفع
+            </button>
+        </form>
+
+        <!-- Social Buttons -->
+        <div class="social-section">
+            <p class="social-text" id="contactText">بعد الدفع، أرسل السكرين إلى المطور عبر:</p>
+            <div class="social-buttons">
+                <a href="https://wa.me/6289679190535" target="_blank" class="social-btn whatsapp">
+                    <i class="fab fa-whatsapp"></i>
+                    <span id="whatsappText">واتساب</span>
+                </a>
+                <a href="https://t.me/DZ_AX" target="_blank" class="social-btn telegram">
+                    <i class="fab fa-telegram"></i>
+                    <span id="telegramText">تلغرام</span>
+                </a>
+                <a href="https://www.facebook.com/KABOS43" target="_blank" class="social-btn facebook">
+                    <i class="fab fa-facebook"></i>
+                    <span id="facebookText">فيسبوك</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Terms Link -->
+        <div class="terms-link">
+            <a href="#" id="termsLink">شروط الخدمة</a>
+        </div>
+    </div>
+
+    <!-- Terms Modal -->
+    <div class="modal-overlay" id="termsModal">
+        <div class="modal-content glass-strong">
+            <button class="close-btn" id="closeModal">&times;</button>
+            <h3 class="modal-header" id="termsTitle">شروط الخدمة</h3>
+            <div class="modal-body" id="termsContent">
+1. يجب أن يكون الحد الأدنى للإيداع 0.5$ أو أكثر
+2. يتم معالجة جميع المدفوعات خلال 24 ساعة
+3. يجب إرسال لقطة شاشة للدفع للتأكيد
+4. لا يمكن استرداد المدفوعات بعد التأكيد
+5. نحن نضمن سرية وأمان جميع البيانات
+6. يتم التواصل فقط عبر القنوات الرسمية
+7. أي محاولة احتيال ستؤدي إلى حظر الحساب
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Translations
+        const translations = {
+            ar: {
+                title: "KABOS STORE",
+                subtitle: "نظام الدفع الاحترافي والآمن",
+                security: "أمان عالي",
+                speed: "سرعة فائقة",
+                trust: "مصداقية",
+                formTitle: "نموذج الدفع",
+                usernameLabel: "اسم المستخدم",
+                amountLabel: "عدد الشحن ($)",
+                orderIdLabel: "معرف الطلب",
+                screenshotLabel: "إرفاق صورة الدفع",
+                screenshotPlaceholder: "اختر صورة الدفع",
+                paymentMethodLabel: "طريقة الدفع",
+                depositNotice: "الحد الأدنى للإيداع: 0.5$",
+                submitBtn: "إرسال طلب الدفع",
+                contactText: "بعد الدفع، أرسل السكرين إلى المطور عبر:",
+                whatsappText: "واتساب",
+                telegramText: "تلغرام", 
+                facebookText: "فيسبوك",
+                termsLink: "شروط الخدمة",
+                termsTitle: "شروط الخدمة",
+                termsContent: "1. يجب أن يكون الحد الأدنى للإيداع 0.5$ أو أكثر\n2. يتم معالجة جميع المدفوعات خلال 24 ساعة\n3. يجب إرسال لقطة شاشة للدفع للتأكيد\n4. لا يمكن استرداد المدفوعات بعد التأكيد\n5. نحن نضمن سرية وأمان جميع البيانات\n6. يتم التواصل فقط عبر القنوات الرسمية\n7. أي محاولة احتيال ستؤدي إلى حظر الحساب",
+                successMessage: "تم إرسال طلب الدفع بنجاح! سيتم التواصل معك قريباً.",
+                errorMessage: "حدث خطأ في إرسال الطلب. يرجى المحاولة مرة أخرى.",
+                processing: "جاري المعالجة..."
+            },
+            en: {
+                title: "KABOS STORE",
+                subtitle: "Professional and Secure Payment System",
+                security: "High Security",
+                speed: "Super Speed",
+                trust: "Reliability",
+                formTitle: "Payment Form",
+                usernameLabel: "Username",
+                amountLabel: "Amount ($)",
+                orderIdLabel: "Order ID",
+                screenshotLabel: "Attach Payment Screenshot",
+                screenshotPlaceholder: "Choose payment screenshot",
+                paymentMethodLabel: "Payment Method",
+                depositNotice: "Minimum deposit: $0.5",
+                submitBtn: "Submit Payment Request",
+                contactText: "After payment, send screenshot to developer via:",
+                whatsappText: "WhatsApp",
+                telegramText: "Telegram",
+                facebookText: "Facebook", 
+                termsLink: "Terms of Service",
+                termsTitle: "Terms of Service",
+                termsContent: "1. Minimum deposit must be $0.5 or more\n2. All payments are processed within 24 hours\n3. Payment screenshot must be sent for confirmation\n4. Payments cannot be refunded after confirmation\n5. We guarantee confidentiality and security of all data\n6. Communication only through official channels\n7. Any fraud attempt will result in account ban",
+                successMessage: "Payment request sent successfully! We will contact you soon.",
+                errorMessage: "An error occurred while sending the request. Please try again.",
+                processing: "Processing..."
+            },
+            ru: {
+                title: "KABOS STORE",
+                subtitle: "Профессиональная и безопасная платежная система",
+                security: "Высокая безопасность",
+                speed: "Супер скорость",
+                trust: "Надежность",
+                formTitle: "Форма оплаты",
+                usernameLabel: "Имя пользователя",
+                amountLabel: "Сумма ($)",
+                orderIdLabel: "ID заказа",
+                screenshotLabel: "Прикрепить скриншот оплаты",
+                screenshotPlaceholder: "Выберите скриншот оплаты",
+                paymentMethodLabel: "Способ оплаты",
+                depositNotice: "Минимальный депозит: $0.5",
+                submitBtn: "Отправить запрос на оплату",
+                contactText: "После оплаты отправьте скриншот разработчику через:",
+                whatsappText: "WhatsApp",
+                telegramText: "Telegram",
+                facebookText: "Facebook",
+                termsLink: "Условия обслуживания",
+                termsTitle: "Условия обслуживания", 
+                termsContent: "1. Минимальный депозит должен быть $0.5 или больше\n2. Все платежи обрабатываются в течение 24 часов\n3. Необходимо отправить скриншот платежа для подтверждения\n4. Платежи не могут быть возвращены после подтверждения\n5. Мы гарантируем конфиденциальность и безопасность всех данных\n6. Связь только через официальные каналы\n7. Любая попытка мошенничества приведет к блокировке аккаунта",
+                successMessage: "Запрос на оплату отправлен успешно! Мы свяжемся с вами в ближайшее время.",
+                errorMessage: "Произошла ошибка при отправке запроса. Пожалуйста, попробуйте снова.",
+                processing: "Обработка..."
+            }
+        };
+
+        // Current language
+        let currentLanguage = 'ar';
+
+        // Language switcher
+        function changeLanguage(lang) {
+            currentLanguage = lang;
+            const html = document.documentElement;
+            
+            if (lang === 'ar') {
+                html.setAttribute('dir', 'rtl');
+                html.setAttribute('lang', 'ar');
+                html.className = 'rtl';
+            } else {
+                html.setAttribute('dir', 'ltr'); 
+                html.setAttribute('lang', lang);
+                html.className = 'ltr';
+            }
+
+            // Update all texts
+            const t = translations[lang];
+            document.getElementById('title').textContent = t.title;
+            document.getElementById('subtitle').textContent = t.subtitle;
+            document.getElementById('security').textContent = t.security;
+            document.getElementById('speed').textContent = t.speed;
+            document.getElementById('trust').textContent = t.trust;
+            document.getElementById('formTitle').textContent = t.formTitle;
+            document.getElementById('usernameLabel').textContent = t.usernameLabel;
+            document.getElementById('amountLabel').textContent = t.amountLabel;
+            document.getElementById('orderIdLabel').textContent = t.orderIdLabel;
+            document.getElementById('screenshotLabel').textContent = t.screenshotLabel;
+            document.getElementById('screenshotPlaceholder').textContent = t.screenshotPlaceholder;
+            document.getElementById('paymentMethodLabel').textContent = t.paymentMethodLabel;
+            document.getElementById('depositNotice').textContent = t.depositNotice;
+            document.getElementById('submitBtn').textContent = t.submitBtn;
+            document.getElementById('contactText').textContent = t.contactText;
+            document.getElementById('whatsappText').textContent = t.whatsappText;
+            document.getElementById('telegramText').textContent = t.telegramText;
+            document.getElementById('facebookText').textContent = t.facebookText;
+            document.getElementById('termsLink').textContent = t.termsLink;
+            document.getElementById('termsTitle').textContent = t.termsTitle;
+            document.getElementById('termsContent').textContent = t.termsContent;
+
+            // Store preference
+            localStorage.setItem('preferred-language', lang);
+        }
+
+        // Initialize language
+        document.getElementById('languageSelect').addEventListener('change', (e) => {
+            changeLanguage(e.target.value);
+        });
+
+        // Load saved language preference
+        const savedLang = localStorage.getItem('preferred-language');
+        if (savedLang && translations[savedLang]) {
+            document.getElementById('languageSelect').value = savedLang;
+            changeLanguage(savedLang);
+        }
+
+        // Payment method selection
+        document.querySelectorAll('.payment-method').forEach(method => {
+            method.addEventListener('click', () => {
+                // Remove selected class from all
+                document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('selected'));
+                // Add selected class to clicked
+                method.classList.add('selected');
+                // Check the radio button
+                method.querySelector('input[type="radio"]').checked = true;
+            });
+        });
+
+        // File input handling
+        document.getElementById('screenshot').addEventListener('change', (e) => {
+            const label = document.getElementById('screenshotPlaceholder');
+            if (e.target.files && e.target.files[0]) {
+                label.textContent = e.target.files[0].name;
+                label.classList.add('file-selected');
+            } else {
+                label.textContent = translations[currentLanguage].screenshotPlaceholder;
+                label.classList.remove('file-selected');
+            }
+        });
+
+        // Show alert
+        function showAlert(message, type) {
+            const alert = document.getElementById('alert');
+            alert.textContent = message;
+            alert.className = `alert ${type}`;
+            alert.style.display = 'block';
+            
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 5000);
+        }
+
+        // Send to Telegram Bot
+        async function sendToTelegram(formData) {
+            const botToken = '7905472205:AAEY5RrhyHOZ27plU5i00FtWLMEfw1dQ19A';
+            const chatId = '5545907758';
+
+            // Get payment method name
+            const selectedMethod = document.querySelector('input[name="paymentMethod"]:checked');
+            const methodElement = selectedMethod.closest('.payment-method');
+            const paymentMethodName = selectedMethod.value.toUpperCase();
+            const paymentId = methodElement.dataset.id;
+
+            // Format timestamp
+            const now = new Date();
+            const timestamp = now.toLocaleString('ar-EG', {
+                timeZone: 'Africa/Cairo',
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+
+            // Format message
+            const message = `🔥 طلب دفع جديد - KABOS STORE 🔥
+
+👤 اسم المستخدم: ${formData.username}
+💰 المبلغ: $${formData.amount}
+🆔 رقم الطلب: ${formData.orderId}
+💳 طريقة الدفع: ${paymentMethodName} PAY
+🎯 معرف الدفع: ${paymentId}
+⏰ التوقيت: ${timestamp}
+
+📊 حالة الطلب: في انتظار التأكيد
+✅ تم إرسال الطلب بنجاح!`;
+
+            try {
+                // Send photo with caption
+                const telegramFormData = new FormData();
+                telegramFormData.append('chat_id', chatId);
+                telegramFormData.append('caption', message);
+                telegramFormData.append('photo', formData.screenshot);
+
+                const response = await fetch(`https://api.telegram.org/bot${botToken}/sendPhoto`, {
+                    method: 'POST',
+                    body: telegramFormData
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Telegram API error: ${response.status}`);
+                }
+
+                return await response.json();
+            } catch (error) {
+                console.error('Telegram send error:', error);
+                throw error;
+            }
+        }
+
+        // Form submission
+        document.getElementById('paymentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.textContent;
+            
+            // Show loading state
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<span class="loading"></span> ${translations[currentLanguage].processing}`;
+
+            try {
+                // Get form data
+                const formData = {
+                    username: document.getElementById('username').value,
+                    amount: document.getElementById('amount').value,
+                    orderId: document.getElementById('orderId').value,
+                    screenshot: document.getElementById('screenshot').files[0]
+                };
+
+                // Validate
+                const selectedMethod = document.querySelector('input[name="paymentMethod"]:checked');
+                if (!selectedMethod) {
+                    throw new Error('يرجى اختيار طريقة دفع');
+                }
+
+                if (!formData.screenshot) {
+                    throw new Error('يرجى رفع صورة الدفع');
+                }
+
+                if (parseFloat(formData.amount) < 0.5) {
+                    throw new Error('الحد الأدنى للإيداع هو 0.5$');
+                }
+
+                // Send to Telegram
+                await sendToTelegram(formData);
+
+                // Success
+                showAlert(translations[currentLanguage].successMessage, 'success');
+                
+                // Reset form
+                document.getElementById('paymentForm').reset();
+                document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('selected'));
+                document.getElementById('screenshotPlaceholder').textContent = translations[currentLanguage].screenshotPlaceholder;
+                document.getElementById('screenshotPlaceholder').classList.remove('file-selected');
+
+            } catch (error) {
+                console.error('Form submission error:', error);
+                showAlert(error.message || translations[currentLanguage].errorMessage, 'error');
+            } finally {
+                // Reset button
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
+        });
+
+        // Terms modal
+        document.getElementById('termsLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('termsModal').style.display = 'flex';
+        });
+
+        document.getElementById('closeModal').addEventListener('click', () => {
+            document.getElementById('termsModal').style.display = 'none';
+        });
+
+        document.getElementById('termsModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('termsModal')) {
+                document.getElementById('termsModal').style.display = 'none';
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                document.getElementById('termsModal').style.display = 'none';
+            }
+        });
+
+        console.log('🔥 KABOS STORE Payment System Loaded Successfully! 🔥');
+    </script>
+</body>
+</html>
